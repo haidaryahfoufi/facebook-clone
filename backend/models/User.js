@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 
+const { ObjectId } = mongoose.Schema;
+
 const userSchema = mongoose.Schema(
   {
     first_name: {
@@ -33,7 +35,8 @@ const userSchema = mongoose.Schema(
     picture: {
       type: String,
       trim: true,
-      default: "",
+      default:
+        "https://res.cloudinary.com/dmhcnhtng/image/upload/v1643044376/avatars/default_pic_jeaybr.png",
     },
     cover: {
       type: String,
@@ -82,7 +85,7 @@ const userSchema = mongoose.Schema(
     search: [
       {
         user: {
-          type: mongoose.Schema.ObjectId,
+          type: ObjectId,
           ref: "User",
         },
       },
@@ -123,7 +126,7 @@ const userSchema = mongoose.Schema(
     savedPosts: [
       {
         post: {
-          type: mongoose.Schema.ObjectId,
+          type: ObjectId,
           ref: "Post",
         },
         savedAt: {
