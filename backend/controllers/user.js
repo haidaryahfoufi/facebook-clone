@@ -5,6 +5,7 @@ const {
 } = require("../helpers/validation");
 const { sendVerificationEmail } = require("../helpers/mailer");
 const User = require("../models/User");
+const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { generateToken } = require("../helpers/tokens");
 exports.register = async (req, res) => {
@@ -69,7 +70,7 @@ exports.register = async (req, res) => {
     }).save();
     const emailVerificationToken = generateToken(
       { id: user._id.toString() },
-      30
+      "30m"
     );
     const url = `${process.env.BASE_URL}/activate/${emailVerificationToken}`;
     sendVerificationEmail(user.email, user.first_name, url);
@@ -82,9 +83,22 @@ exports.register = async (req, res) => {
       last_name: user.last_name,
       token: token,
       verified: user.verified,
-      message: "Register Success | please activate your email to start",
+      message: "Register Success! please activate your email to start",
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+exports.activateAccount = async (req, res) => {
+  const { token } = req.body;
+  const user = jwt.verify(token, process.env.TOKEN_SECRET);
+  const check = await User.findById(user.id);
+  if (check.verified == true) {
+    return res.status(400).json({ message: "This email is already activated" });
+  } else {
+    await User.findByIdAndUpdate(user.id, { verified: true });
+    return res
+      .status(200)
+      .json({ message: "Account has been activated successfully" });
   }
 };
