@@ -11,7 +11,6 @@ const loginInfos = {
 export default function Login() {
   const [login, setLogin] = useState(loginInfos);
   const { email, password } = login;
-  console.log(login);
   const handleLoginChange = (e) => {
     const { name, value } = e.target;
     setLogin({ ...login, [name]: value });
